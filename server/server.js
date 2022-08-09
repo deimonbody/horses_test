@@ -52,9 +52,9 @@ function getRound(socket) {
     }
     
   });
-
   socket.emit('ticker', round);
 }
+
 
 function trackTickers(socket) {
   getRound(socket);
@@ -84,6 +84,8 @@ app.get('/', function(req, res) {
 });
 
 socketServer.on('connection', (socket) => {
+  socketServer.emit('userConected')
+
   socket.on('start', () => {
     horses.map(horse => horse.distance = 0);
     trackTickers(socket);
