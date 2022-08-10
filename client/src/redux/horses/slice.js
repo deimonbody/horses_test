@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import horseReducer  from "./reducer";
+import horseReducer from "./reducer";
 const initialState = {
   horses: [],
 };

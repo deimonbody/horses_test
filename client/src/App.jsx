@@ -5,34 +5,31 @@ import { updateHorsesList } from "./redux/horses/actions";
 import { HorsesRunning } from "./Components/HorsesRunning";
 import { Winner } from "./Components/Winner";
 
-function App() {
+const App = () => {
   const { horses } = useSelector((store) => store.horseReducer);
   const dispatcher = useDispatch();
   const [winnerHorse, setWinnerHorse] = useState(null);
 
   useEffect(() => {
-    socket.on('userConected',function(){
+    socket.emit("start");
+    socket.on("userConected", function () {
       dispatcher(updateHorsesList([]));
       setWinnerHorse(null);
-      socket.emit('start');
+      socket.off("ticker");
       socket.on("ticker", function (response) {
         dispatcher(updateHorsesList(response));
       });
-    })
-   
+    });
   }, []);
 
   useEffect(() => {
-    if(!horses.length){
-      setWinnerHorse(null);
-      return;
-    } 
     const isWin = horses.some((horse) => horse.distance === 1000);
     if (isWin) {
-      const horseIndex = horses.findLastIndex((horse) => horse.distance === 1000);
-      const horse = horses[horseIndex];
+      const winHorseIndex = horses.findLastIndex(
+        (horse) => horse.distance === 1000
+      );
+      const horse = horses[winHorseIndex];
       socket.off("ticker");
-      
       setWinnerHorse(horse.name);
     }
   }, [horses]);
@@ -48,6 +45,6 @@ function App() {
       </div>
     </>
   );
-}
+};
 
 export default App;
